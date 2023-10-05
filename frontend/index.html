@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous">
+    </script>
+<script src="https://cdn.jsdelivr.net/npm/axios@1.1.2/dist/axios.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+
+
+<html>
+
+<head>
+
+
+    <title>Your Page Title</title>
+    <style>
+        /* Add your CSS styles here */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+        }
+
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+
+        /* Add more styles as needed */
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Welcome to my library</h1>
+
+    </header>
+    <navbar>
+        <nav class="navbar navbar-expand-lg bg-body-tertiary">
+            <div class="container-fluid">
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="index.html">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="about.html">About</a>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </navbar>
+
+    <main>
+        <button style="background-color: green;" onclick="addCustomer()">Add a new customer</button>
+        <button style="background-color: green;" onclick="addBook()">Add a new book</button><br><br>
+        <button style="background-color: orange;" onclick="loanBook()">Loan a book</button>
+        <button style="background-color: orange;" onclick="returnBook()">Return a book</button><br><br>
+        <button style="background-color: green;" onclick="displayAllBooks()">Display all books </button>
+        <button style="background-color: orange;" onclick="displayAllCustomers()">Display all customers</button>
+        <button style="background-color: orange;" onclick="displayLateLoans()">Display late loans</button><br><br>
+        <button style="background-color: orange;" onclick="findBookByName()">Find book by name </button>
+        <button style="background-color: orange;" onclick="findCustomerByName()">Find customer by name</button><br><br>
+        <button style="background-color: orange;" onclick="removeBook()">Remove book</button>
+        <button style="background-color: orange;" onclick="removeCustomer()">Remove customer</button><br><br>
+
+    </main>
+    <div id="display"></div>
+    <div id="bookList"></div>
+    <div id="customerList"></div>
+    <div id="lateLoans"></div>
+    <!-- 1 -->
+    <!-- 1 -->
+    <!-- 1 -->
+    <form id="addCustomerForm" onsubmit="addCustomer(event)">
+        <label for="customerName">Customer Name:</label>
+        <input type="text" id="customerName" name="customerName" required>
+
+        <label for="customerCity">Customer City:</label>
+        <input type="text" id="customerCity" name="customerCity" required>
+
+        <label for="customerAge">Customer Age:</label>
+        <input type="number" id="customerAge" name="customerAge" required>
+
+        <button type="submit" style="background-color: green;">Add Customer</button>
+    </form>
+    <hr>
+    <!-- 1 -->
+    <!-- 1 -->
+    <!-- 1 -->
+    <!-- 2 -->
+    <!-- 2 -->
+    <!-- 2 -->
+    <!-- Add this in the <main> section of your HTML -->
+
+    <!-- Add this in the <main> section of your HTML -->
+    <form id="addBookForm" onsubmit="addBook(event)">
+        <label for="bookName">Book Name:</label>
+        <input type="text" id="bookName" name="bookName" required>
+
+        <label for="bookAuthor">Book Author:</label>
+        <input type="text" id="bookAuthor" name="bookAuthor" required>
+
+        <label for="bookYearPublished">Year Published:</label>
+        <input type="number" id="bookYearPublished" name="bookYearPublished" required>
+
+        <label for="bookType">Book Type:</label>
+        <select id="bookType" name="bookType" required>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+        </select>
+
+        <label for="bookAvailability">Availability:</label>
+        <select id="bookAvailability" name="bookAvailability" required>
+            <option value="true">True</option>
+            <option value="false">False</option>
+        </select>
+
+        <button type="submit" style="background-color: green;">Add Book</button>
+    </form>
+
+
+    <!-- 2 -->
+    <!-- 2 -->
+    <!-- 2 -->
+
+
+    <script>
+        toastr.options = {
+            "positionClass": "toast-bottom-right", // Adjust the position as needed
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        };
+    </script>
+
+    <script>
+        const MY_SERVER = "http://127.0.0.1:5000"
+        // Function to add a new customer
+
+        // Function to add a new customer
+        function addCustomer(event) {
+            event.preventDefault(); // Prevent form submission
+
+            const customerName = document.getElementById('customerName').value;
+            const customerCity = document.getElementById('customerCity').value;
+            const customerAge = document.getElementById('customerAge').value;
+
+            // Make a POST request to add a new customer
+            axios.post(`${MY_SERVER}/customers`, {
+                name: customerName,
+                city: customerCity,
+                age: customerAge
+            })
+                .then(response => {
+                    // Handle the successful response here
+                    console.log("Customer added successfully:", response.data);
+
+                    // Show a success notification
+                    toastr.success('Customer added successfully!');
+                })
+                .catch(error => {
+                    // Handle errors
+                    console.error("Error adding customer:", error);
+
+                    // Show an error notification
+                    toastr.error('Error adding customer. Please try again.');
+                });
+        }
+
+        // Function to add a new book
+        function addBook(event) {
+            event.preventDefault(); // Prevent form submission
+
+            const bookName = document.getElementById('bookName').value;
+            const bookAuthor = document.getElementById('bookAuthor').value;
+            const bookYearPublished = document.getElementById('bookYearPublished').value;
+            const bookType = document.getElementById('bookType').value;
+            const bookAvailability = document.getElementById('bookAvailability').value === 'true'; // Convert to boolean
+
+            // Make a POST request to add a new book
+            axios.post(`${MY_SERVER}/books`, {
+                name: bookName,
+                author: bookAuthor,
+                year_published: bookYearPublished,
+                book_type: bookType,
+                availability: bookAvailability
+            })
+                .then(response => {
+                    // Handle the successful response here
+                    console.log("Book added successfully:", response.data);
+
+                    // Show a success notification
+                    toastr.success('Book added successfully!');
+                })
+                .catch(error => {
+                    // Handle errors
+                    console.error("Error adding book:", error);
+
+                    // Show an error notification
+                    toastr.error('Error adding book. Please try again.');
+                });
+        }
+
+
+
+        // Function to display all books
+        function displayAllBooks() {
+            // Make a GET request to fetch all books
+            axios.get(`${MY_SERVER}/books`)
+                .then(response => {
+                    // Handle the successful response here
+                    const books = response.data.books;
+
+                    // Display the list of books
+                    const bookListContainer = document.getElementById('bookList');
+                    bookListContainer.innerHTML = ''; // Clear previous content
+
+                    if (books.length === 0) {
+                        bookListContainer.innerHTML = 'No books available.';
+                    } else {
+                        // Create a list to display books
+                        const bookList = document.createElement('ul');
+
+                        // Iterate through the list of books and create list items
+                        books.forEach(book => {
+                            const listItem = document.createElement('li');
+                            listItem.textContent = `ID: ${book.id}, Name: ${book.name}, Author: ${book.author}, Year Published: ${book.year_published}, Type: ${book.book_type}, Availability: ${book.availability ? 'Available' : 'Not Available'}`;
+                            bookList.appendChild(listItem);
+                        });
+
+                        // Append the list to the container
+                        bookListContainer.appendChild(bookList);
+                    }
+                })
+                .catch(error => {
+                    // Handle errors
+                    console.error("Error fetching books:", error);
+
+                    // Show an error notification
+                    toastr.error('Error fetching books. Please try again.');
+                });
+        }
+
+
+
+
+
+
+
+    </script>
+
+    <footer>
+        &copy; 2023 Library store
+    </footer>
+</body>
+
+</html>
