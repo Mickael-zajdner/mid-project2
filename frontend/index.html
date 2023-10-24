@@ -7,6 +7,9 @@
 <script src="https://cdn.jsdelivr.net/npm/axios@1.1.2/dist/axios.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
 
 
 
@@ -43,6 +46,9 @@
 
         /* Add more styles as needed */
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.1.2/dist/axios.min.js"></script>
 </head>
 
 <body>
@@ -68,23 +74,18 @@
     </navbar>
 
     <main>
-        <button style="background-color: green;" onclick="addCustomer()">Add a new customer</button>
-        <button style="background-color: green;" onclick="addBook()">Add a new book</button><br><br>
-        <button style="background-color: orange;" onclick="loanBook()">Loan a book</button>
-        <button style="background-color: orange;" onclick="returnBook()">Return a book</button><br><br>
         <button style="background-color: green;" onclick="displayAllBooks()">Display all books </button>
-        <button style="background-color: orange;" onclick="displayAllCustomers()">Display all customers</button>
-        <button style="background-color: orange;" onclick="displayLateLoans()">Display late loans</button><br><br>
-        <button style="background-color: orange;" onclick="findBookByName()">Find book by name </button>
-        <button style="background-color: orange;" onclick="findCustomerByName()">Find customer by name</button><br><br>
-        <button style="background-color: orange;" onclick="removeBook()">Remove book</button>
-        <button style="background-color: orange;" onclick="removeCustomer()">Remove customer</button><br><br>
+        <button style="background-color: green;" onclick="displayAllCustomers()">Display all customers</button>
+        <button style="background-color: red;" onclick="displayLateLoans()">Display late loans</button><br><br>
+
 
     </main>
     <div id="display"></div>
     <div id="bookList"></div>
     <div id="customerList"></div>
     <div id="lateLoans"></div>
+    <div id="loanMessage"></div>
+
     <!-- 1 -->
     <!-- 1 -->
     <!-- 1 -->
@@ -135,11 +136,96 @@
 
         <button type="submit" style="background-color: green;">Add Book</button>
     </form>
+    <hr>
 
 
     <!-- 2 -->
     <!-- 2 -->
     <!-- 2 -->
+    <!-- 3 -->
+    <!-- 3 -->
+    <!-- 3 -->
+    <!-- Add an input field for the loan customer ID -->
+    <!-- Add an input field for the loan customer ID -->
+    <label for="loanCustomerId">Enter Customer ID:</label>
+    <input type="number" id="loanCustomerId" placeholder="Customer ID" required>
+
+    <!-- Add an input field for the loan book ID -->
+    <label for="loanBookId">Enter Book ID:</label>
+    <input type="number" id="loanBookId" placeholder="Book ID" required>
+
+    <!-- Add an input field for the loan date -->
+    <label for="loanDate">Enter Loan Date:</label>
+    <input type="date" id="loanDate" required>
+
+    <!-- Add an input field for the return date -->
+    <label for="returnDate">Enter Return Date:</label>
+    <input type="date" id="returnDate" required>
+
+    <!-- Add a "Loan Book" button for loaning a book -->
+    <button style="background-color: red;" onclick="addLoan()">Loan Book</button>
+
+    <hr>
+    <!-- Your HTML form -->
+    <label for="returnCustomerId">Enter Customer ID:</label>
+    <input type="number" id="returnCustomerId" placeholder="Customer ID" required>
+
+    <label for="returnBookId">Enter Book ID:</label>
+    <input type="number" id="returnBookId" placeholder="Book ID" required>
+
+    <label for="returnDate">Enter Return Date:</label>
+    <input type="date" id="returnDate" required>
+
+    <button style="background-color: red;" onclick="returnBook()">Return Book</button>
+
+    <hr>
+
+    <!-- 3 -->
+    <!-- 3 -->
+    <!-- 3 -->
+    <!-- 4 -->
+    <!-- 4 -->
+    <!-- 4 -->
+    <!-- Search input for finding books by name -->
+    <label for="searchByName">Search book by Name:</label>
+    <input type="text" id="searchByName" oninput="findBookByName(event)" placeholder="enter book name" />
+
+    <!-- Container to display search results -->
+    <div id="searchResults"></div>
+    <!-- 4 -->
+    <!-- 4 -->
+    <!-- 4 -->
+    <!-- 5 -->
+    <!-- 5 -->
+    <!-- 5 -->
+    <label for="customerSearchInput">Search Customers by Name:</label>
+    <input type="text" id="customerSearchInput" oninput="findCustomerByName()" placeholder="Enter customer name"><br>
+    <!-- 5 -->
+    <!-- 5 -->
+    <!-- 5 -->
+    <!-- 6 -->
+    <!-- 6 -->
+    <!-- 6 -->
+    <label for="bookIdInput">Enter Book ID:</label>
+    <input type="number" id="bookIdInput" placeholder="Book ID">
+    <!-- Add a "Remove" button for removing a book by ID -->
+    <button style="background-color: green;" onclick="removeBookById()">Remove Book by ID</button><br>
+    <!-- 6 -->
+    <!-- 6 -->
+    <!-- 6 -->
+    <!-- 7 -->
+    <!-- 7 -->
+    <!-- 7 -->
+    <!-- Add an input field for the customer ID -->
+    <label for="customerIdInput">Enter Customer ID:</label>
+    <input type="number" id="customerIdInput" placeholder="Customer ID">
+
+    <!-- Add a "Remove" button for removing a customer by ID -->
+    <button style="background-color: green;" onclick="removeCustomerById()">Remove Customer by ID</button>
+
+    <!-- 7 -->
+    <!-- 7 -->
+    <!-- 7 -->
 
 
     <script>
@@ -264,6 +350,258 @@
                 });
         }
 
+
+
+        // Function to display all customers
+        function displayAllCustomers() {
+            // Make a GET request to fetch all customers
+            axios.get(`${MY_SERVER}/customers`)
+                .then(response => {
+                    // Handle the successful response here
+                    const customers = response.data.customers;
+
+                    // Display the list of customers
+                    const customerListContainer = document.getElementById('customerList');
+                    customerListContainer.innerHTML = ''; // Clear previous content
+
+                    if (customers.length === 0) {
+                        customerListContainer.innerHTML = 'No customers available.';
+                    } else {
+                        // Create a list to display customers
+                        const customerList = document.createElement('ul');
+
+                        // Iterate through the list of customers and create list items
+                        customers.forEach(customer => {
+                            const listItem = document.createElement('li');
+                            listItem.textContent = `ID: ${customer.id}, Name: ${customer.name}, City: ${customer.city}, Age: ${customer.age}`;
+                            customerList.appendChild(listItem);
+                        });
+
+                        // Append the list to the container
+                        customerListContainer.appendChild(customerList);
+                    }
+                })
+                .catch(error => {
+                    // Handle errors
+                    console.error("Error fetching customers:", error);
+
+                    // Show an error notification
+                    toastr.error('Error fetching customers. Please try again.');
+                });
+        }
+
+
+        // need to implement addLoan !
+
+
+        // Function to find books by name
+        function findBookByName(event) {
+            const searchQuery = event.target.value;
+
+            // Make a GET request to search for books by name
+            axios.get(`${MY_SERVER}/books/search?name=${searchQuery}`)
+                .then(response => {
+                    const books = response.data.books;
+
+                    // Display the search results
+                    const searchResultsContainer = document.getElementById('searchResults');
+                    searchResultsContainer.innerHTML = ''; // Clear previous content
+
+                    if (books.length === 0) {
+                        searchResultsContainer.innerHTML = 'No books found.';
+                    } else {
+                        // Create a list to display search results
+                        const resultList = document.createElement('ul');
+
+                        // Iterate through the list of books and create list items
+                        books.forEach(book => {
+                            const listItem = document.createElement('li');
+                            listItem.textContent = `ID: ${book.id}, Name: ${book.name}, Author: ${book.author}, Year Published: ${book.year_published}, Type: ${book.book_type}, Availability: ${book.availability ? 'Available' : 'Not Available'}`;
+                            resultList.appendChild(listItem);
+                        });
+
+                        // Append the list to the container
+                        searchResultsContainer.appendChild(resultList);
+                    }
+                })
+                .catch(error => {
+                    // Handle errors
+                    console.error("Error searching for books:", error);
+                    toastr.error('Error searching for books. Please try again.');
+                });
+        }
+
+        // Function to search customers by name
+        function findCustomerByName() {
+            const searchQuery = document.getElementById('customerSearchInput').value;
+
+            // Make a GET request to search customers by name
+            axios.get(`${MY_SERVER}/customers/search?name=${searchQuery}`)
+                .then(response => {
+                    // Handle the successful response here
+                    const customers = response.data.customers;
+
+                    // Display the list of customers
+                    const customerListContainer = document.getElementById('customerList');
+                    customerListContainer.innerHTML = ''; // Clear previous content
+
+                    if (customers.length === 0) {
+                        customerListContainer.innerHTML = 'No customers found.';
+                    } else {
+                        // Create a list to display customers
+                        const customerList = document.createElement('ul');
+
+                        // Iterate through the list of customers and create list items
+                        customers.forEach(customer => {
+                            const listItem = document.createElement('li');
+                            listItem.textContent = `ID: ${customer.id}, Name: ${customer.name}, City: ${customer.city}, Age: ${customer.age}`;
+                            customerList.appendChild(listItem);
+                        });
+
+                        // Append the list to the container
+                        customerListContainer.appendChild(customerList);
+                    }
+                })
+                .catch(error => {
+                    // Handle errors
+                    console.error("Error searching for customers:", error);
+                    toastr.error('Error searching for customers. Please try again.');
+                });
+        }
+        function removeBookById() {
+            // Get the book ID from the input field
+            const bookId = document.getElementById('bookIdInput').value;
+
+            // Make a DELETE request to remove the book
+            axios.delete(`${MY_SERVER}/books/${bookId}`)
+                .then(response => {
+                    // Handle the successful response here
+                    toastr.success('Book removed successfully.');
+
+                    // Optionally, update the displayed book list after removal
+                    findBookByName();
+                })
+                .catch(error => {
+                    // Handle errors
+                    console.error("Error removing book:", error);
+                    toastr.error('Error removing book. Please try again.');
+                });
+        }
+        // Function to remove a customer by ID
+        function removeCustomerById() {
+            // Get the customer ID from the input field
+            const customerId = document.getElementById('customerIdInput').value;
+
+            // Make a DELETE request to remove the customer
+            axios.delete(`${MY_SERVER}/customers/${customerId}`)
+                .then(response => {
+                    // Handle the successful response here
+                    toastr.success('Customer removed successfully.');
+
+                    // Optionally, update the displayed customer list after removal
+                    displayAllCustomers();
+                })
+                .catch(error => {
+                    // Handle errors
+                    console.error("Error removing customer:", error);
+                    toastr.error('Error removing customer. Please try again.');
+                });
+        }
+
+
+        // Function to loan a book
+        // Function to add a new loan
+        function addLoan() {
+            // Get form data
+            const customerID = document.getElementById('loanCustomerId').value;
+            const bookID = document.getElementById('loanBookId').value;
+            const loanDate = document.getElementById('loanDate').value;
+            const returnDate = document.getElementById('returnDate').value;
+
+            // Check if custID and bookID exist in the database
+            axios.get(`${MY_SERVER}/customers/${customerID}`)
+                .then(customerResponse => {
+                    const customerExists = customerResponse.data.customer ? true : false;
+
+                    axios.get(`${MY_SERVER}/books/${bookID}`)
+                        .then(bookResponse => {
+                            const bookExists = bookResponse.data.book ? true : false;
+                            const bookAvailability = bookResponse.data.book.availability;
+
+                            if (customerExists && bookExists && bookAvailability) {
+                                // If conditions are met, proceed with the loan
+                                // Make a POST request to add a new loan
+                                axios.post(`${MY_SERVER}/loans`, {
+                                    custID: customerID,
+                                    bookID: bookID,
+                                    loan_date: loanDate,
+                                    return_date: returnDate
+                                })
+                                    .then(response => {
+                                        // Handle the successful response here
+                                        console.log("Loan added successfully:", response.data);
+
+                                        // Show a success notification
+                                        toastr.success('Loan added successfully!');
+                                    })
+                                    .catch(error => {
+                                        // Handle errors
+                                        console.error("Error adding loan:", error);
+
+                                        // Show an error notification
+                                        toastr.error('Error adding loan. Please try again.');
+                                    });
+                            } else {
+                                alert('Customer, book, or book availability is not valid.');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error checking book:', error);
+                            alert('Error checking book. Please try again.');
+                        });
+                })
+                .catch(error => {
+                    console.error('Error checking customer:', error);
+                    alert('Error checking customer. Please try again.');
+                });
+        }
+
+        function returnBook() {
+            // Get input values
+            const custID = document.getElementById('returnCustomerId').value;
+            const bookID = document.getElementById('returnBookId').value;
+            const returnDate = document.getElementById('returnDate').value;
+
+            // Create a data object to send in the request
+            const data = {
+                custID: parseInt(custID),
+                bookID: parseInt(bookID),
+                return_date: returnDate
+            };
+
+            // Make an AJAX request to the server
+            fetch('http://127.0.0.1:5000/loans/return', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log(data.message);
+                    // Handle success, e.g., show a success message to the user
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    // Handle error, e.g., show an error message to the user
+                });
+        }
 
 
 

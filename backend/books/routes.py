@@ -107,3 +107,63 @@ def update_book(book_id):
     except Exception as e:
         # Handle any exceptions, e.g., log the error
         return jsonify({'error': f'Error: {str(e)}'}), 500
+
+@books_bp.route('/books/<int:book_id>', methods=["GET"])
+def display_book(book_id):
+    try:
+        # Query the book with the provided ID from the database
+        book = Book.query.get(book_id)
+
+        # Check if the book exists
+        if not book:
+            return jsonify({'error': 'Book not found'}), 404
+
+        # Prepare a dictionary containing book information
+        book_info = {
+            'id': book.id,
+            'name': book.name,
+            'author': book.author,
+            'year_published': book.year_published,
+            'book_type': book.book_type,
+            'availability': book.availability
+        }
+
+        # Return the book information as JSON
+        return jsonify({'book': book_info})
+    except Exception as e:
+        # Handle any exceptions, e.g., log the error
+        return jsonify({'error': f'Error: {str(e)}'}), 500
+    
+@books_bp.route('/books', methods=["GET"])
+def get_books_filtered():
+    search_query = request.args.get('name')
+    
+    # If there's a search query, filter the books
+    if search_query:
+        books = Book.query.filter(Book.name.ilike(f"%{search_query}%")).all()
+    else:
+        books = Book.query.all()
+
+    # Convert the books to a list of dictionaries
+    books_list = [{"id": book.id, "name": book.name, "author": book.author, "year_published": book.year_published, "book_type": book.book_type, "availability": book.availability} for book in books]
+
+    return jsonify({"books": books_list})
+
+@books_bp.route('/books/search', methods=["GET"])
+def search_books_by_name():
+    try:
+        search_query = request.args.get('name')
+
+        # If there's a search query, filter the books
+        if search_query:
+            books = Book.query.filter(Book.name.ilike(f"%{search_query}%")).all()
+        else:
+            books = Book.query.all()
+
+        # Convert the books to a list of dictionaries
+        books_list = [{"id": book.id, "name": book.name, "author": book.author, "year_published": book.year_published, "book_type": book.book_type, "availability": book.availability} for book in books]
+
+        return jsonify({"books": books_list})
+    except Exception as e:
+        # Handle any exceptions, e.g., log the error
+        return jsonify({'error': f'Error: {str(e)}'}), 500
